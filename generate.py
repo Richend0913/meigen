@@ -11,7 +11,7 @@ import urllib.parse
 from datetime import datetime
 
 SITE_URL = "https://richend0913.github.io/meigen"
-ADSENSE_ID = "ca-pub-6327505164684489"
+ADSENSE_ID = ""  # AdSense removed: not approved (2026-11-02)
 AMAZON_TAG = "okuritegift-22"
 RAKUTEN_AFF_ID = "522e40a0.f2dc4208.522e40a1.385f875e"
 
@@ -1456,7 +1456,6 @@ def get_header_html(title, description, canonical, is_subpage=False):
 <meta name="twitter:description" content="{html.escape(description)}">
 <link rel="canonical" href="{canonical}">
 <link rel="stylesheet" href="{prefix}css/style.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_ID}" crossorigin="anonymous"></script>
 </head>
 <body>
 <header class="site-header">
@@ -1513,10 +1512,6 @@ def get_footer_html(is_subpage=False):
 def get_adsense_block(slot_type="banner"):
     cls = "ad-space--banner" if slot_type == "banner" else "ad-space--rect"
     return f'''
-<div class="ad-space {cls}">
-<ins class="adsbygoogle" style="display:block" data-ad-client="{ADSENSE_ID}" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
-</div>
 '''
 
 
