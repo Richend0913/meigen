@@ -12,6 +12,7 @@ from datetime import datetime
 
 SITE_URL = "https://richend0913.github.io/meigen"
 ADSENSE_ID = ""  # AdSense removed: not approved (2026-11-02)
+GA_TAG = '<script async src="https://www.googletagmanager.com/gtag/js?id=G-63VB4HT3T2"></script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag(\'js\',new Date());gtag(\'config\',\'G-63VB4HT3T2\',{page_area:\'meigen\'});</script>'
 AMAZON_TAG = "okuritegift-22"
 RAKUTEN_AFF_ID = "522e40a0.f2dc4208.522e40a1.385f875e"
 
@@ -1441,6 +1442,7 @@ def get_header_html(title, description, canonical, is_subpage=False):
     return f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
+{GA_TAG}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{html.escape(title)}</title>
@@ -1523,6 +1525,42 @@ def get_amazon_link(query, title):
 def get_rakuten_link(query):
     q = urllib.parse.quote(query)
     return f'https://hb.afl.rakuten.co.jp/hgc/{RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F{q}%2F'
+
+
+def get_book_card(author=None):
+    """Affiliate book card for vacated ad slots. author=None -> generic 名言集 card."""
+    if author:
+        heading = f"{author}の本を読む"
+        amazon_url = get_amazon_link(f"{author} 名言", f"{author}の本")
+        rakuten_url = get_rakuten_link(f"{author} 本")
+    else:
+        heading = "名言集・偉人の言葉の本を読む"
+        amazon_url = get_amazon_link("名言集 本", "名言集の本")
+        rakuten_url = get_rakuten_link("名言集 本")
+    return f'''
+<aside class="aff-card" style="margin:24px 0;padding:16px;border:1px solid #e5e0d8;border-radius:8px;background:#fffdf8">
+<div class="aff-card__label" style="font-size:11px;color:#888;margin-bottom:6px">広告・PR</div>
+<p class="aff-card__title" style="font-weight:bold;margin:0 0 10px">📚 {html.escape(heading)}</p>
+<div class="book-links">
+<a href="{amazon_url}" target="_blank" rel="nofollow sponsored noopener" class="book-link">
+<div class="book-icon">📖</div>
+<div class="book-info">
+<div class="book-title-text">{html.escape(heading)}</div>
+<div class="book-store">Amazon</div>
+</div>
+<div class="book-btn">Amazonで探す</div>
+</a>
+<a href="{rakuten_url}" target="_blank" rel="nofollow sponsored noopener" class="book-link">
+<div class="book-icon">📕</div>
+<div class="book-info">
+<div class="book-title-text">{html.escape(heading)}</div>
+<div class="book-store">楽天ブックス</div>
+</div>
+<div class="book-btn">楽天で探す</div>
+</a>
+</div>
+</aside>
+'''
 
 
 def get_twitter_share(text, url):
@@ -1657,12 +1695,12 @@ def generate_person_page(person):
 '''
         # Insert ad after 3rd quote
         if i == 2:
-            page += get_adsense_block("rect")
+            page += get_book_card(name)
 
     page += '</div>\n</section>\n'
 
-    # Ad
-    page += f'<div class="container--narrow">{get_adsense_block("banner")}</div>'
+    # Pre-footer slot: author book card
+    page += f'<div class="container--narrow">{get_book_card(name)}</div>'
 
     # Books / Affiliate
     page += f'''
@@ -1954,7 +1992,7 @@ def generate_index():
 
     page += '</div>\n</section>\n'
 
-    page += f'<div class="container">{get_adsense_block("rect")}</div>'
+    page += f'<div class="container">{get_book_card()}</div>'
 
     # SEO text content (500+ words)
     page += f'''
